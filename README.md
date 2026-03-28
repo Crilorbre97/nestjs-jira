@@ -64,6 +64,28 @@ $ npm run test:cov
 $ docker-compose up
 ```
 
+# Migrations setup
+
+```bash
+# Generate migration
+$ npm run migration:generate --name=MIGRATION_NAME
+```
+
+```bash
+# Generate empty migration
+$ npm run migration:create --name=MIGRATION_NAME
+```
+
+```bash
+# Run migration
+$ npm run migration:run
+```
+
+```bash
+# Rollback migration
+$ npm run migration:revert
+```
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
