@@ -25,8 +25,8 @@ export class ProjectsService {
         return {
             data: data,
             total: total,
-            page: page,
-            lastPage: Math.ceil(total / limit)
+            currentPage: page,
+            totalPages: Math.ceil(total / limit)
         }
     }
 
