@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm'
 import databaseConfig from './config/database.config';
 import { DatabaseModule } from './database/database.module';
+import { ProjectModule } from './projects/project.module';
 
 @Module({
   imports: [
@@ -10,7 +10,8 @@ import { DatabaseModule } from './database/database.module';
       isGlobal: true,
       load: [databaseConfig]
     }),
-    DatabaseModule
+    DatabaseModule,
+    ProjectModule
   ],
   controllers: [],
   providers: [],
