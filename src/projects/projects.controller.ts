@@ -1,15 +1,16 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDTO } from './dto/create-project.dto';
 import { UpdateProjectDTO } from './dto/update-project.dto';
+import { PaginationDTO } from 'src/common/dto/pagination.dto';
 
 @Controller('projects')
 export class ProjectsController {
     constructor(private readonly projectService: ProjectsService){}
 
     @Get()
-    findAll(){
-        return this.projectService.findAll()
+    findAll(@Query() dto: PaginationDTO){
+        return this.projectService.findAll(dto)
     }
 
     @Get(":id")

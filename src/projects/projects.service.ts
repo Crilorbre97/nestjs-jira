@@ -4,6 +4,9 @@ import { Project } from './entities/project.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { CreateProjectDTO } from './dto/create-project.dto';
 import { UpdateProjectDTO } from './dto/update-project.dto';
+import { PaginationDTO } from 'src/common/dto/pagination.dto';
+import { PaginatedResponse } from 'src/common/interfaces/paginated-response.interface';
+import { totalmem } from 'os';
 
 @Injectable()
 export class ProjectsService {
@@ -12,8 +15,20 @@ export class ProjectsService {
         private projectRepository: Repository<Project>
     ){}
 
-    findAll(): Promise<Project[]> {
-        return this.projectRepository.find()
+    async findAll(dto: PaginationDTO): Promise<PaginatedResponse<Project>> {
+        const { page = 1, limit = 10 } = dto;
+
+        const [data, total] = await this.projectRepository.findAndCount({
+            skip: (page - 1) * limit,
+            take: limit
+        })
+
+        return {
+            data: data,
+            total: total,
+            page: page,
+            lastPage: Math.ceil(total / limit)
+        }
     }
 
     async findOne(id: number): Promise<Project | null> {
