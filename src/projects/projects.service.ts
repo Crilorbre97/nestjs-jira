@@ -6,7 +6,6 @@ import { CreateProjectDTO } from './dto/create-project.dto';
 import { UpdateProjectDTO } from './dto/update-project.dto';
 import { PaginationDTO } from 'src/common/dto/pagination.dto';
 import { PaginatedResponse } from 'src/common/interfaces/paginated-response.interface';
-import { totalmem } from 'os';
 
 @Injectable()
 export class ProjectsService {
