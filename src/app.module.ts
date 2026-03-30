@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import databaseConfig from './config/database.config';
 import { DatabaseModule } from './database/database.module';
 import { ProjectModule } from './projects/project.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -11,7 +13,9 @@ import { ProjectModule } from './projects/project.module';
       load: [databaseConfig]
     }),
     DatabaseModule,
-    ProjectModule
+    ProjectModule,
+    UsersModule,
+    AuthModule
   ],
   controllers: [],
   providers: [],
