@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDTO } from 'src/auth/dto/create-user.dto';
 import { UserAccount, UserAccountRole } from 'src/users/entities/user-account.entity';
@@ -6,6 +6,9 @@ import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bycrypt from 'bcrypt'
 import { CreateUserResponseDTO } from './dto/create-user-response.dto';
+import { LoginUserDTO } from './dto/login-user.dto';
+import { JwtService } from '@nestjs/jwt';
+import { LoginUserResponseDTO } from './dto/login-user.response.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +16,8 @@ export class AuthService {
         @InjectRepository(User)
         private userRepository: Repository<User>,
         @InjectRepository(UserAccount)
-        private userAccountRepository: Repository<UserAccount>
+        private userAccountRepository: Repository<UserAccount>,
+        private jstService: JwtService
     ) { }
 
     async create(dto: CreateUserDTO): Promise<CreateUserResponseDTO> {
@@ -48,6 +52,25 @@ export class AuthService {
         return this.mapCreateResponse(user)
     }
 
+    async login(dto: LoginUserDTO): Promise<LoginUserResponseDTO> {
+        const existingUserAccount = await this.userAccountRepository.findOne({
+            where: { username: dto.username },
+            relations: ['user']
+        })
+
+        if (!existingUserAccount){
+            throw new UnauthorizedException("Invalid credentials or account not exists")
+        }
+
+        const verifyPassword = await this.verifyPassword(dto.password, existingUserAccount.password)
+
+        if (!verifyPassword){
+            throw new UnauthorizedException("Invalid credentials or account not exists")
+        }
+
+        return this.generateTokens(existingUserAccount)
+    }
+
     private async hashPassword(password: string): Promise<string> {
         return await bycrypt.hash(password, 10)
     }
@@ -70,5 +93,25 @@ export class AuthService {
                 updatedAt: user.userAccount.updatedAt,
             }
         }
+    }
+
+    private async verifyPassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
+        return await bycrypt.compare(plainPassword, hashedPassword)
+    }
+
+    private generateTokens(userAccount: UserAccount){
+        return {
+            accessToken: this.generateAccessToken(userAccount)
+        }
+    }
+
+    private generateAccessToken(userAccount: UserAccount): string{
+        const payload = {
+            sub: userAccount.user.id,
+            role: userAccount.role
+        }
+        return this.jstService.sign(payload, {
+            expiresIn: '15m'
+        })
     }
 }
