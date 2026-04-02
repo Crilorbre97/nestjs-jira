@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } 
 import { ProjectsService } from './projects.service';
 import { CreateProjectDTO } from './dto/create-project.dto';
 import { UpdateProjectDTO } from './dto/update-project.dto';
-import { PaginationDTO } from 'src/common/dto/pagination.dto';
+import { PaginationDTO } from '../common/dto/pagination.dto';
 
 @Controller('projects')
 export class ProjectsController {
