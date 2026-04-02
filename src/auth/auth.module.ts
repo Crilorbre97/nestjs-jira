@@ -6,6 +6,8 @@ import { User } from 'src/users/entities/user.entity';
 import { UserAccount } from 'src/users/entities/user-account.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -15,9 +17,10 @@ import { ConfigService } from '@nestjs/config';
       useFactory: (config: ConfigService) => ({
         secret: config.get('jwt.secret')
       })
-    })
+    }),
+    PassportModule
   ],
   controllers: [AuthController],
-  providers: [AuthService]
+  providers: [AuthService, JwtStrategy]
 })
 export class AuthModule { }

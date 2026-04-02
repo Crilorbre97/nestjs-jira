@@ -71,6 +71,16 @@ export class AuthService {
         return this.generateTokens(existingUserAccount)
     }
 
+    async findUser(id: number): Promise<User>{
+        const user = await this.userRepository.findOneOrFail({
+            where: {
+                id: id
+            }
+        })
+
+        return user
+    }
+
     private async hashPassword(password: string): Promise<string> {
         return await bycrypt.hash(password, 10)
     }
