@@ -45,6 +45,10 @@ describe("ProjectsController", () => {
         service = module.get<ProjectsService>(ProjectsService)
     })
 
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
+
     it('should be defined', () => {
         expect(controller).toBeDefined();
     });

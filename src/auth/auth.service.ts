@@ -1,8 +1,8 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDTO } from 'src/auth/dto/create-user.dto';
-import { UserAccount, UserAccountRole } from 'src/users/entities/user-account.entity';
-import { User } from 'src/users/entities/user.entity';
+import { UserAccount, UserAccountRole } from '../users/entities/user-account.entity';
+import { User } from '../users/entities/user.entity';
 import { Repository } from 'typeorm';
 import * as bycrypt from 'bcrypt'
 import { CreateUserResponseDTO } from './dto/create-user-response.dto';

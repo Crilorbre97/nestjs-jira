@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "class-validator";
-import { UserGender } from "src/users/entities/user.entity";
+import { UserGender } from "../../users/entities/user.entity";
 import { MathPasswords } from "../decorators/match-passwords.decorator"
 
 export class CreateUserDTO {
