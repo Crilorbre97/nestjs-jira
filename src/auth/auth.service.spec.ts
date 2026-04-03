@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing"
 import { AuthService } from "./auth.service"
-import { Repository } from "typeorm";
+import { EntityNotFoundError, Repository } from "typeorm";
 import { User, UserGender } from "../users/entities/user.entity";
 import { UserAccount, UserAccountRole } from "../users/entities/user-account.entity";
 import { getRepositoryToken } from "@nestjs/typeorm";
@@ -10,8 +10,6 @@ import { CreateUserResponseDTO } from "./dto/create-user-response.dto";
 import { ConflictException, UnauthorizedException } from "@nestjs/common";
 import { LoginUserDTO } from "./dto/login-user.dto";
 import * as bcrypt from 'bcrypt';
-import { sign } from "crypto";
-import { exec } from "child_process";
 
 describe("AuthService", () => {
     let service: AuthService;
@@ -25,6 +23,7 @@ describe("AuthService", () => {
 
     const mockUserRepository = {
         findOne: jest.fn(),
+        findOneOrFail: jest.fn(),
         create: jest.fn(),
         save: jest.fn()
     }
@@ -245,7 +244,7 @@ describe("AuthService", () => {
        expect(spySignJwt).toHaveBeenCalledTimes(0)
     })
 
-        it('should throw exception when passwords do not match', async () => {
+    it('should throw exception when passwords do not match', async () => {
        const dto: LoginUserDTO = {
         username: "username",
         password: "password"
@@ -261,5 +260,24 @@ describe("AuthService", () => {
        expect(spyBcrypt).toHaveBeenCalled()
        expect(spyBcrypt).toHaveBeenCalledWith("password", "password")
        expect(spySignJwt).toHaveBeenCalledTimes(0)
+    })
+
+    it('should find user by id', async () => {
+        const userId: number = 1;
+        const spy = jest.spyOn(userRepository, "findOneOrFail").mockImplementation(() => Promise.resolve(mockUser))
+        const result = await service.findUser(userId)
+
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toHaveBeenCalledWith({"where": {"id": 1}})
+        expect(result).toBe(mockUser)
+    })
+
+    it('should throw exception when user not found', async () => {
+        const userId: number = 1;
+        const spy = jest.spyOn(userRepository, "findOneOrFail").mockRejectedValue(new EntityNotFoundError(`Could not find any entity of type "User" matching`, {"where": {"id": 1}}))
+
+        await expect(service.findUser(userId)).rejects.toThrow(EntityNotFoundError);
+        expect(spy).toHaveBeenCalled()
+        expect(spy).toHaveBeenCalledWith({"where": {"id": 1}})
     })
 })
