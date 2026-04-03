@@ -87,7 +87,7 @@ describe("ProjectService", () => {
 
     it("should throw exception when not found project on findOneBy", async () => {
         const projectId: number = 1;
-        const spy = jest.spyOn(repository, "findOneBy").mockRejectedValue(new NotFoundException(`Project with ${projectId} not found`))
+        const spy = jest.spyOn(repository, "findOneBy").mockImplementation(() => Promise.resolve(null))
 
         await expect(service.findOne(projectId)).rejects.toThrow(NotFoundException);
         await expect(service.findOne(projectId)).rejects.toThrow(`Project with ${projectId} not found`);
@@ -131,7 +131,7 @@ describe("ProjectService", () => {
         const dto: UpdateProjectDTO = {
             title: "Updated title"
         }
-        const spyFindOneBy = jest.spyOn(repository, "findOneBy").mockRejectedValue(new NotFoundException(`Project with ${projectId} not found`))
+        const spyFindOneBy = jest.spyOn(repository, "findOneBy").mockImplementation(() => Promise.resolve(null))
         const spySave = jest.spyOn(repository, "save")
 
         await expect(service.update(projectId, dto)).rejects.toThrow(NotFoundException);
@@ -156,7 +156,7 @@ describe("ProjectService", () => {
 
     it('should throw exception when not found project on delete', async () => {
         const projectId: number = 1;
-        const spyFindOneBy = jest.spyOn(repository, "findOneBy").mockRejectedValue(new NotFoundException(`Project with ${projectId} not found`))
+        const spyFindOneBy = jest.spyOn(repository, "findOneBy").mockImplementation(() => Promise.resolve(null))
         const spyDelete = jest.spyOn(repository, "delete")
 
         await expect(service.delete(projectId)).rejects.toThrow(NotFoundException);

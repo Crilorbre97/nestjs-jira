@@ -164,7 +164,7 @@ describe("AuthService", () => {
             password: "password",
             confirmPassword: "password"
         }
-        const spyFindOneUser = jest.spyOn(userRepository, "findOne").mockRejectedValue(new ConflictException(`Email already in use. Please, try with a different email`))
+        const spyFindOneUser = jest.spyOn(userRepository, "findOne").mockImplementation(() => Promise.resolve(mockUser))
         const spyFindOneUserAccount = jest.spyOn(userAccountRepository, "findOne")
         const spyCreateUserAccount = jest.spyOn(userAccountRepository, "create")
         const spyCreateUser = jest.spyOn(userRepository, "create")
@@ -192,7 +192,7 @@ describe("AuthService", () => {
             confirmPassword: "password"
         }
         const spyFindOneUser = jest.spyOn(userRepository, "findOne").mockImplementation(() => Promise.resolve(null))
-        const spyFindOneUserAccount = jest.spyOn(userAccountRepository, "findOne").mockRejectedValue(new ConflictException(`Username alredy in use. Please, try with different username`))
+        const spyFindOneUserAccount = jest.spyOn(userAccountRepository, "findOne").mockImplementation(() => Promise.resolve(mockUserAccount))
         const spyCreateUserAccount = jest.spyOn(userAccountRepository, "create")
         const spyCreateUser = jest.spyOn(userRepository, "create")
         const spySaveUser = jest.spyOn(userRepository, "save")
@@ -232,7 +232,7 @@ describe("AuthService", () => {
         username: "username",
         password: "password"
        }
-       const spyFindOneUserAccount = jest.spyOn(userAccountRepository, "findOne").mockRejectedValue(new UnauthorizedException(`Invalid credentials or account not exists`))
+       const spyFindOneUserAccount = jest.spyOn(userAccountRepository, "findOne").mockImplementation(() => Promise.resolve(null))
        const spyBcrypt = jest.spyOn(bcrypt, "compare")
        const spySignJwt = jest.spyOn(jwtService, "sign")
 
