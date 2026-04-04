@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm'
 
 @Module({
@@ -8,14 +8,14 @@ import { TypeOrmModule } from '@nestjs/typeorm'
             inject: [ConfigService],
             useFactory: (config: ConfigService) => ({
                 type: 'postgres',
-                host: config.get('database.host'),
-                port: config.get('database.port'),
-                username: config.get('database.username'),
-                password: config.get('database.password'),
-                database: config.get('database.name'),
+                host: config.get(process.env.NODE_ENV === 'test' ? 'database-tests.host' : 'database.host'),
+                port: config.get(process.env.NODE_ENV === 'test' ? 'database-tests.port' : 'database.port'),
+                username: config.get(process.env.NODE_ENV === 'test' ? 'database-tests.username' : 'database.username'),
+                password: config.get(process.env.NODE_ENV === 'test' ? 'database-tests.password' : 'database.password'),
+                database: config.get(process.env.NODE_ENV === 'test' ? 'database-tests.name' : 'database.name'),
                 entities: [__dirname + '/../**/*.entity.{js,ts}'],
                 migrations: [__dirname + '/../migrations/*.{js,ts}'],
-                logging: true
+                logging: process.env.NODE_ENV === 'test' ? false : true
             }),
         })
     ]
