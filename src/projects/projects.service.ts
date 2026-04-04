@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { DeleteResult, Repository } from 'typeorm';
@@ -47,6 +47,10 @@ export class ProjectsService {
         const project = await this.projectRepository.findOneBy({ id })
 
         if (!project) throw new NotFoundException(`Project with ${id} not found`);
+
+        if (Object.keys(dto).length === 0) {
+            throw new BadRequestException(`There aren't fields to update`);
+        }
 
         Object.assign(project, Object.fromEntries(
             Object.entries(dto).filter(([_, v]) => v !== undefined)

@@ -4,19 +4,21 @@ import { AppModule } from "../../src/app.module"
 import { App } from "supertest/types"
 import * as request from 'supertest';
 import { DataSource } from "typeorm"
-import { createManyProjects } from "../utils/factories/project.factory"
+import { createManyProjects, createProject, findProyect } from "../utils/factories/project.factory"
 import { runMigrations, cleanDB } from "../utils/database.utils";
+import { CreateProjectDTO } from "../../src/projects/dto/create-project.dto";
+import { UpdateProjectDTO } from "../../src/projects/dto/update-project.dto";
 
 describe("Project e2e", () => {
     let app: INestApplication<App>
     let dataSource: DataSource
 
     beforeAll(async () => {
-       const moduleFixture: TestingModule = await Test.createTestingModule({
-        imports: [AppModule]
-       }).compile()
+        const moduleFixture: TestingModule = await Test.createTestingModule({
+            imports: [AppModule]
+        }).compile()
 
-       app = moduleFixture.createNestApplication()
+        app = moduleFixture.createNestApplication()
         app.useGlobalPipes(
             new ValidationPipe({
                 whitelist: true, // remove properties that don't have decorators
@@ -25,10 +27,10 @@ describe("Project e2e", () => {
                 disableErrorMessages: false
             })
         )
-       await app.init()
+        await app.init()
 
-       dataSource = app.get(DataSource)
-       await runMigrations(dataSource)
+        dataSource = app.get(DataSource)
+        await runMigrations(dataSource)
     })
 
     beforeEach(async () => {
@@ -112,5 +114,142 @@ describe("Project e2e", () => {
             currentPage: 1,
             totalPages: 3
         })
+    })
+
+    it('(GET) /projects/:id', async () => {
+        const project = await createProject(dataSource, { title: "Title", description: "Description" })
+        const response = await request(app.getHttpServer()).get(`/projects/${project.id}`)
+
+        expect(response.status).toEqual(200)
+        expect(response.body).toEqual(expect.objectContaining({
+            id: project.id,
+            title: project.title,
+            description: project.description,
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
+        }))
+    })
+
+    it('(GET) /projects/:id throw NotFound exception', async () => {
+        const response = await request(app.getHttpServer()).get(`/projects/1`)
+
+        expect(response.status).toEqual(404)
+        expect(response.body).toEqual(
+            {
+                message: 'Project with 1 not found',
+                error: 'Not Found',
+                statusCode: 404
+            }
+        )
+    })
+
+    it('(POST) /projects', async () => {
+        const dto: CreateProjectDTO = {
+            title: "New project",
+            description: "Description"
+        }
+        const response = await request(app.getHttpServer()).post("/projects").send(dto)
+        expect(response.status).toEqual(201)
+        expect(response.body).toEqual(expect.objectContaining({
+            id: expect.any(Number),
+            title: dto.title,
+            description: dto.description,
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
+        }))
+    })
+
+    it('(POST) /projects throw BadRequest exception', async () => {
+        const response = await request(app.getHttpServer()).post("/projects").send({})
+        expect(response.status).toEqual(400)
+        expect(response.body).toEqual({
+            message: expect.any(Array),
+            error: "Bad Request",
+            statusCode: 400
+        })
+        expect(response.body.message).toEqual(
+            expect.arrayContaining([
+                'Title can not be longer than 50 characters',
+                'Title must be at least 3 characters long',
+                'Title must be a string',
+                'Title is required',
+                'Description must be at least 3 characters long',
+                'Description must be a string',
+                'Description is required'
+
+            ])
+        )
+    })
+
+    it('(PUT) /projects/:id', async () => {
+        const project = await createProject(dataSource, { title: "Title", description: "Description" })
+        const dto: UpdateProjectDTO = {
+            title: "Updated title"
+        }
+        const response = await request(app.getHttpServer()).put(`/projects/${project.id}`).send(dto)
+        const updatedProject = await findProyect(dataSource, project.id)
+
+        expect(response.status).toEqual(200)
+        expect(response.body).toEqual(expect.objectContaining({
+            id: expect.any(Number),
+            title: updatedProject.title,
+            description: project.description,
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
+        }))
+    })
+
+    it('(PUT) /projects/:id throw NotFound exception', async () => {
+        const dto: UpdateProjectDTO = {
+            title: "Updated title"
+        }
+        const response = await request(app.getHttpServer()).put(`/projects/1`).send(dto)
+
+        expect(response.status).toEqual(404)
+        expect(response.body).toEqual(
+            {
+                message: 'Project with 1 not found',
+                error: 'Not Found',
+                statusCode: 404
+            }
+        )
+    })
+
+    it('(PUT) /projects/:id throw BadRequest exception', async () => {
+        const project = await createProject(dataSource, { title: "Title", description: "Description" })
+        const response = await request(app.getHttpServer()).put(`/projects/${project.id}`).send({})
+
+        expect(response.status).toEqual(400)
+        expect(response.body).toEqual(
+            {
+                message: `There aren't fields to update`,
+                error: 'Bad Request',
+                statusCode: 400
+            }
+        )
+    })
+
+    it('(DELETE) /projects/:id', async () => {
+        const project = await createProject(dataSource, { title: "Title", description: "Description" })
+        const response = await request(app.getHttpServer()).delete(`/projects/${project.id}`)
+
+        expect(response.status).toEqual(200)
+        expect(response.body).toEqual(expect.objectContaining({
+            affected: 1,
+            raw: []
+        }))
+    })
+
+    it('(DELETE) /projects/:id throw NotFound exception', async () => {
+        const response = await request(app.getHttpServer()).delete(`/projects/1`)
+
+        expect(response.status).toEqual(404)
+        expect(response.body).toEqual(
+            {
+                message: 'Project with 1 not found',
+                error: 'Not Found',
+                statusCode: 404
+            }
+        )
     })
 })
