@@ -172,7 +172,7 @@ describe("Auth e2e", () => {
             password: dto.password
         }
         const response = await request(app.getHttpServer()).post('/auth/login').send(loginDto)
-        expect(response.status).toEqual(201)
+        expect(response.status).toEqual(200)
         expect(response.body).toEqual(expect.objectContaining({
             accessToken: expect.any(String)
         }))
