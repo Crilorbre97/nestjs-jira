@@ -8,15 +8,25 @@ import { createManyProjects, createProject, findProyect } from "../utils/factori
 import { runMigrations, cleanDB } from "../utils/database.utils";
 import { CreateProjectDTO } from "../../src/projects/dto/create-project.dto";
 import { UpdateProjectDTO } from "../../src/projects/dto/update-project.dto";
+import { DatabaseModule } from "../../src/database/database.module";
+import { DatabaseTestModule } from "../../src/database/database-test.module";
 
 describe("Project e2e", () => {
     let app: INestApplication<App>
     let dataSource: DataSource
 
+    beforeAll(() => {
+        if (process.env.NODE_ENV !== 'test') {
+            throw new Error('Tests e2e deben ejecutarse con NODE_ENV=test')
+        }
+    })
+
     beforeAll(async () => {
         const moduleFixture: TestingModule = await Test.createTestingModule({
             imports: [AppModule]
-        }).compile()
+        })
+        .overrideModule(DatabaseModule).useModule(DatabaseTestModule)
+        .compile()
 
         app = moduleFixture.createNestApplication()
         app.useGlobalPipes(
