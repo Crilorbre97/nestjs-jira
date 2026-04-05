@@ -11,6 +11,7 @@ import { UserGender } from "../../src/users/entities/user.entity"
 import * as request from 'supertest';
 import { createUser } from "../utils/factories/user.factory"
 import { LoginUserDTO } from "../../src/auth/dto/login-user.dto"
+import { loginUser } from "../utils/auth.utils"
 
 describe("Auth e2e", () => {
     let app: INestApplication<App>
@@ -258,6 +259,44 @@ describe("Auth e2e", () => {
             expect.arrayContaining([
                 'Password is required'
             ])
+        )
+    })
+
+    it('(GET) /auth/profile', async () => {
+        const dto: CreateUserDTO = {
+            name: "name",
+            lastname: "lastname",
+            email: "email@gmail.com",
+            phone: "666666666",
+            gender: UserGender.MALE,
+            username: "username",
+            password: "Cristi@na1",
+            confirmPassword: "Cristi@na1"
+        }
+        const token = await loginUser(dataSource, dto, app)
+
+        const response = await request(app.getHttpServer()).get('/auth/profile').set('Authorization', `Bearer ${token}`)
+        expect(response.status).toEqual(200)
+        expect(response.body).toEqual(expect.objectContaining({
+            id: expect.any(Number),
+            name: dto.name,
+            lastname: dto.lastname,
+            email: dto.email,
+            phone: dto.phone,
+            gender: dto.gender,
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String)
+        }))
+    })
+
+    it('(GET) /auth/profile throw Unauthorized exception when token is not valid', async () => {
+        const response = await request(app.getHttpServer()).get('/auth/profile').set('Authorization', `Bearer invalid_token`)
+        expect(response.status).toEqual(401)
+        expect(response.body).toEqual(
+            {
+                message: 'Unauthorized',
+                statusCode: 401
+            }
         )
     })
 })
