@@ -140,7 +140,7 @@ describe("Project e2e", () => {
         }))
     })
 
-    it('(GET) /projects/:id throw NotFound exception', async () => {
+    it('(GET) /projects/:id throw NotFound exception when project not found', async () => {
         const response = await request(app.getHttpServer()).get(`/projects/1`)
 
         expect(response.status).toEqual(404)
@@ -169,7 +169,7 @@ describe("Project e2e", () => {
         }))
     })
 
-    it('(POST) /projects throw BadRequest exception', async () => {
+    it('(POST) /projects throw BadRequest exception when dto is not valid', async () => {
         const response = await request(app.getHttpServer()).post("/projects").send({})
         expect(response.status).toEqual(400)
         expect(response.body).toEqual({
@@ -209,7 +209,7 @@ describe("Project e2e", () => {
         }))
     })
 
-    it('(PUT) /projects/:id throw NotFound exception', async () => {
+    it('(PUT) /projects/:id throw NotFound exception when project not found', async () => {
         const dto: UpdateProjectDTO = {
             title: "Updated title"
         }
@@ -225,7 +225,7 @@ describe("Project e2e", () => {
         )
     })
 
-    it('(PUT) /projects/:id throw BadRequest exception', async () => {
+    it('(PUT) /projects/:id throw BadRequest exception when dto is not valid', async () => {
         const project = await createProject(dataSource, { title: "Title", description: "Description" })
         const response = await request(app.getHttpServer()).put(`/projects/${project.id}`).send({})
 
@@ -250,7 +250,7 @@ describe("Project e2e", () => {
         }))
     })
 
-    it('(DELETE) /projects/:id throw NotFound exception', async () => {
+    it('(DELETE) /projects/:id throw NotFound exception when project not found', async () => {
         const response = await request(app.getHttpServer()).delete(`/projects/1`)
 
         expect(response.status).toEqual(404)
