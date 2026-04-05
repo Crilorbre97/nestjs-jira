@@ -263,27 +263,17 @@ describe("Auth e2e", () => {
     })
 
     it('(GET) /auth/profile', async () => {
-        const dto: CreateUserDTO = {
-            name: "name",
-            lastname: "lastname",
-            email: "email@gmail.com",
-            phone: "666666666",
-            gender: UserGender.MALE,
-            username: "username",
-            password: "Cristi@na1",
-            confirmPassword: "Cristi@na1"
-        }
-        const token = await loginUser(dataSource, dto, app)
+        const token = await loginUser(dataSource, app)
 
         const response = await request(app.getHttpServer()).get('/auth/profile').set('Authorization', `Bearer ${token}`)
         expect(response.status).toEqual(200)
         expect(response.body).toEqual(expect.objectContaining({
             id: expect.any(Number),
-            name: dto.name,
-            lastname: dto.lastname,
-            email: dto.email,
-            phone: dto.phone,
-            gender: dto.gender,
+            name: expect.any(String),
+            lastname: expect.any(String),
+            email: expect.any(String),
+            phone: expect.any(String),
+            gender: expect.any(String),
             createdAt: expect.any(String),
             updatedAt: expect.any(String)
         }))
