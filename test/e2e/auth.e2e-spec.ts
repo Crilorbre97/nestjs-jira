@@ -219,7 +219,7 @@ describe("Auth e2e", () => {
 
         const loginDto: LoginUserDTO = {
             username: dto.username,
-            password: "Cristi@na11"
+            password: "password"
         }
         const response = await request(app.getHttpServer()).post('/auth/login').send(loginDto)
         expect(response.status).toEqual(401)
@@ -245,7 +245,7 @@ describe("Auth e2e", () => {
 
         const loginDto: LoginUserDTO = {
             username: dto.username,
-            password: "password"
+            password: ""
         }
         const response = await request(app.getHttpServer()).post('/auth/login').send(loginDto)
         expect(response.status).toEqual(400)
@@ -256,7 +256,7 @@ describe("Auth e2e", () => {
         })
         expect(response.body.message).toEqual(
             expect.arrayContaining([
-                'Password must be between 6 and 64 characters long with 1 special character and 1 capital character'
+                'Password is required'
             ])
         )
     })
