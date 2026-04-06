@@ -9,12 +9,13 @@ import { ProjectModule } from './projects/project.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { QueueModule } from './queue/queue.module';
+import clientsConfig from './config/clients.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig, jwtConfig, databaseTestsConfig, bullConfig]
+      load: [databaseConfig, jwtConfig, databaseTestsConfig, bullConfig, clientsConfig]
     }),
     DatabaseModule,
     ProjectModule,

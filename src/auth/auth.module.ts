@@ -8,6 +8,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { BullModule } from '@nestjs/bullmq';
+import { AuthProducer } from './producer/auth.producer';
+import { AuthProcessor } from './processor/auth.processor';
+import { ClientModule } from 'src/clients/client.module';
 
 @Module({
   imports: [
@@ -18,9 +22,11 @@ import { JwtStrategy } from './strategies/jwt.strategy';
         secret: config.get('jwt.secret')
       })
     }),
-    PassportModule
+    PassportModule,
+    BullModule.registerQueue({ name: 'auth' }),
+    ClientModule
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy]
+  providers: [AuthService, JwtStrategy, AuthProducer, AuthProcessor]
 })
 export class AuthModule { }
