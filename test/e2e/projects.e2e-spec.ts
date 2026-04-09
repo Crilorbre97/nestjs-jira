@@ -52,7 +52,7 @@ describe("Project e2e", () => {
     })
 
     it('(GET) /projects', async () => {
-        createManyProjects(dataSource, 15)
+        await createManyProjects(dataSource, 15)
         const response = await request(app.getHttpServer()).get("/projects")
 
         expect(response.status).toEqual(200);
@@ -77,7 +77,7 @@ describe("Project e2e", () => {
     })
 
     it('(GET) /projects page 2', async () => {
-        createManyProjects(dataSource, 15)
+        await createManyProjects(dataSource, 15)
         const response = await request(app.getHttpServer()).get("/projects?page=2")
 
         expect(response.status).toEqual(200);
@@ -102,7 +102,7 @@ describe("Project e2e", () => {
     })
 
     it('(GET) /projects limit 5', async () => {
-        createManyProjects(dataSource, 15)
+        await createManyProjects(dataSource, 15)
         const response = await request(app.getHttpServer()).get("/projects?limit=5")
 
         expect(response.status).toEqual(200);
