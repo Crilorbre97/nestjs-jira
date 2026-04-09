@@ -33,6 +33,11 @@ export class User {
     })
     gender: UserGender;
 
+    @Column({
+        nullable: true
+    })
+    avatarUrl: string
+
     @OneToOne(() => UserAccount, (userAccount) => userAccount.user, {
         cascade: true,
         onDelete: "CASCADE"

@@ -9,6 +9,7 @@ import { CreateUserResponseDTO } from './dto/create-user-response.dto';
 import { LoginUserDTO } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserResponseDTO } from './dto/login-user.response.dto';
+import { AuthProducer } from './producer/auth.producer';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,8 @@ export class AuthService {
         private userRepository: Repository<User>,
         @InjectRepository(UserAccount)
         private userAccountRepository: Repository<UserAccount>,
-        private jstService: JwtService
+        private jstService: JwtService,
+        private authProducer: AuthProducer
     ) { }
 
     async create(dto: CreateUserDTO): Promise<CreateUserResponseDTO> {
@@ -49,6 +51,8 @@ export class AuthService {
         newUser.userAccount = newUserAccount
         const user = await this.userRepository.save(newUser)
 
+        await this.authProducer.fetchAvatarUrl({ userId: user.id })
+
         return this.mapCreateResponse(user)
     }
 
@@ -79,6 +83,13 @@ export class AuthService {
         })
 
         return user
+    }
+
+    async addAvatarUrlToUser(user: User, avatarUrl: string): Promise<void> {
+        if (avatarUrl){
+            user.avatarUrl = avatarUrl
+            await this.userRepository.save(user)
+        }
     }
 
     private async hashPassword(password: string): Promise<string> {

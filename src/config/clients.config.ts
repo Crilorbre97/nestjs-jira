@@ -1,5 +1,3 @@
-import { registerAs } from "@nestjs/config";
-
 export default () => ({
     unsplash: {
         url: process.env.UNSPLASH_URL,
