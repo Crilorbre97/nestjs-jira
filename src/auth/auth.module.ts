@@ -11,7 +11,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { BullModule } from '@nestjs/bullmq';
 import { AuthProducer } from './producer/auth.producer';
 import { AuthProcessor } from './processor/auth.processor';
-import { ClientModule } from 'src/clients/client.module';
+import { ClientModule } from '../clients/client.module';
 
 @Module({
   imports: [

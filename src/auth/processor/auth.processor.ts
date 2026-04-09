@@ -1,6 +1,6 @@
 import { Processor, WorkerHost } from "@nestjs/bullmq";
 import { Job } from "bullmq";
-import { UnsplashClient } from "src/clients/unplash/unsplash.client";
+import { UnsplashClient } from "../../clients/unplash/unsplash.client";
 import { AuthService } from "../auth.service";
 
 @Processor('auth')
