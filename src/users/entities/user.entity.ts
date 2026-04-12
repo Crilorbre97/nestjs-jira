@@ -36,7 +36,7 @@ export class User {
     @Column({
         nullable: true
     })
-    avatarUrl: string
+    avatarUrl?: string
 
     @OneToOne(() => UserAccount, (userAccount) => userAccount.user, {
         cascade: true,
