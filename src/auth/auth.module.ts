@@ -23,7 +23,18 @@ import { ClientModule } from '../clients/client.module';
       })
     }),
     PassportModule,
-    BullModule.registerQueue({ name: 'auth' }),
+    BullModule.registerQueue({
+      name: 'auth', defaultJobOptions: {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 2000
+        },
+        removeOnComplete: true,
+        removeOnFail: false
+
+      }
+    }),
     ClientModule
   ],
   controllers: [AuthController],
