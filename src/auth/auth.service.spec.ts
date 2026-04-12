@@ -10,12 +10,14 @@ import { CreateUserResponseDTO } from "./dto/create-user-response.dto";
 import { ConflictException, UnauthorizedException } from "@nestjs/common";
 import { LoginUserDTO } from "./dto/login-user.dto";
 import * as bcrypt from 'bcrypt';
+import { AuthProducer } from "./producer/auth.producer";
 
 describe("AuthService", () => {
     let service: AuthService;
     let jwtService: JwtService;
     let userRepository: Repository<User>
     let userAccountRepository: Repository<UserAccount>
+    let authProducer: AuthProducer
 
     const mockJwtService = {
         sign: jest.fn()
@@ -31,6 +33,10 @@ describe("AuthService", () => {
     const mockUserAccountRepository = {
         findOne: jest.fn(),
         create: jest.fn()
+    }
+
+    const mockAuthProcuder = {
+        fetchAvatarUrl: jest.fn()
     }
 
     const mockUser: User = {
@@ -107,6 +113,10 @@ describe("AuthService", () => {
                     provide: getRepositoryToken(UserAccount),
                     useValue: mockUserAccountRepository
                 },
+                {
+                    provide: AuthProducer,
+                    useValue: mockAuthProcuder
+                }
 
             ]
         }).compile()
@@ -115,6 +125,7 @@ describe("AuthService", () => {
         jwtService = module.get<JwtService>(JwtService)
         userRepository = module.get<Repository<User>>(getRepositoryToken(User))
         userAccountRepository = module.get<Repository<UserAccount>>(getRepositoryToken(UserAccount))
+        authProducer = module.get<AuthProducer>(AuthProducer)
     })
 
     afterEach(() => {
@@ -141,6 +152,7 @@ describe("AuthService", () => {
         const spyCreateUserAccount = jest.spyOn(userAccountRepository, "create").mockImplementation(() => new UserAccount())
         const spyCreateUser = jest.spyOn(userRepository, "create").mockImplementation(() => new User())
         const spySaveUser = jest.spyOn(userRepository, "save").mockImplementation(() => Promise.resolve(mockUser))
+        const spyAuthProcuder = jest.spyOn(authProducer, "fetchAvatarUrl")
         const result = await service.create(dto)
 
         expect(spyFindOneUser).toHaveBeenCalled()
@@ -150,6 +162,8 @@ describe("AuthService", () => {
         expect(spyCreateUserAccount).toHaveBeenCalled()
         expect(spyCreateUser).toHaveBeenCalled()
         expect(spySaveUser).toHaveBeenCalled()
+        expect(spyAuthProcuder).toHaveBeenCalled()
+        expect(spyAuthProcuder).toHaveBeenCalledWith({"userId": 1})
         expect(result).toEqual(mockCreateUserResponse)
     })
 
