@@ -5,7 +5,7 @@ import { App } from "supertest/types"
 import * as request from 'supertest';
 import { DataSource } from "typeorm"
 import { createManyProjects, createProject, findProyect } from "../utils/factories/project.factory"
-import { runMigrations, cleanDB } from "../utils/database.utils";
+import { cleanDB } from "../utils/database.utils";
 import { CreateProjectDTO } from "../../src/projects/dto/create-project.dto";
 import { UpdateProjectDTO } from "../../src/projects/dto/update-project.dto";
 import { DatabaseModule } from "../../src/database/database.module";
@@ -40,7 +40,6 @@ describe("Project e2e", () => {
         await app.init()
 
         dataSource = app.get(DataSource)
-        await runMigrations(dataSource)
     })
 
     beforeEach(async () => {

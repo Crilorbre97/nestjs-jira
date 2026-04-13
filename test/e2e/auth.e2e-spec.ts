@@ -5,7 +5,7 @@ import { DatabaseTestModule } from "../../src/database/database-test.module"
 import { INestApplication, ValidationPipe } from "@nestjs/common"
 import { App } from "supertest/types"
 import { DataSource } from "typeorm"
-import { cleanDB, runMigrations } from "../utils/database.utils"
+import { cleanDB } from "../utils/database.utils"
 import { CreateUserDTO } from "../../src/auth/dto/create-user.dto"
 import { UserGender } from "../../src/users/entities/user.entity"
 import * as request from 'supertest';
@@ -41,7 +41,6 @@ describe("Auth e2e", () => {
         await app.init()
 
         dataSource = app.get(DataSource)
-        await runMigrations(dataSource)
     })
 
     beforeEach(async () => {
