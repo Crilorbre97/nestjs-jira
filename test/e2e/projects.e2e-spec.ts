@@ -4,7 +4,7 @@ import { AppModule } from "../../src/app.module"
 import { App } from "supertest/types"
 import * as request from 'supertest';
 import { DataSource } from "typeorm"
-import { createManyProjects, createProject, findProyect } from "../utils/factories/project.factory"
+import { ProjectFactory } from "../utils/factories/project.factory"
 import { cleanDB } from "../utils/database.utils";
 import { CreateProjectDTO } from "../../src/projects/dto/create-project.dto";
 import { UpdateProjectDTO } from "../../src/projects/dto/update-project.dto";
@@ -14,6 +14,7 @@ import { DatabaseTestModule } from "../../src/database/database-test.module";
 describe("Project e2e", () => {
     let app: INestApplication<App>
     let dataSource: DataSource
+    let projectFactory: ProjectFactory
 
     beforeAll(() => {
         if (process.env.NODE_ENV !== 'test') {
@@ -40,6 +41,7 @@ describe("Project e2e", () => {
         await app.init()
 
         dataSource = app.get(DataSource)
+        projectFactory = new ProjectFactory(dataSource)
     })
 
     beforeEach(async () => {
@@ -51,7 +53,7 @@ describe("Project e2e", () => {
     })
 
     it('(GET) /projects', async () => {
-        await createManyProjects(dataSource, 15)
+        await projectFactory.createManyProjects(15)
         const response = await request(app.getHttpServer()).get("/projects")
 
         expect(response.status).toEqual(200);
@@ -76,7 +78,7 @@ describe("Project e2e", () => {
     })
 
     it('(GET) /projects page 2', async () => {
-        await createManyProjects(dataSource, 15)
+        await projectFactory.createManyProjects(15)
         const response = await request(app.getHttpServer()).get("/projects?page=2")
 
         expect(response.status).toEqual(200);
@@ -101,7 +103,7 @@ describe("Project e2e", () => {
     })
 
     it('(GET) /projects limit 5', async () => {
-        await createManyProjects(dataSource, 15)
+        await projectFactory.createManyProjects(15)
         const response = await request(app.getHttpServer()).get("/projects?limit=5")
 
         expect(response.status).toEqual(200);
@@ -126,7 +128,7 @@ describe("Project e2e", () => {
     })
 
     it('(GET) /projects/:id', async () => {
-        const project = await createProject(dataSource, { title: "Title", description: "Description" })
+        const project = await projectFactory.createProject({ title: "Title", description: "Description" })
         const response = await request(app.getHttpServer()).get(`/projects/${project.id}`)
 
         expect(response.status).toEqual(200)
@@ -191,12 +193,12 @@ describe("Project e2e", () => {
     })
 
     it('(PUT) /projects/:id', async () => {
-        const project = await createProject(dataSource, { title: "Title", description: "Description" })
+        const project = await projectFactory.createProject({ title: "Title", description: "Description" })
         const dto: UpdateProjectDTO = {
             title: "Updated title"
         }
         const response = await request(app.getHttpServer()).put(`/projects/${project.id}`).send(dto)
-        const updatedProject = await findProyect(dataSource, project.id)
+        const updatedProject = await projectFactory.findProyect(project.id)
 
         expect(response.status).toEqual(200)
         expect(response.body).toEqual(expect.objectContaining({
@@ -225,7 +227,7 @@ describe("Project e2e", () => {
     })
 
     it('(PUT) /projects/:id throw BadRequest exception when dto is not valid', async () => {
-        const project = await createProject(dataSource, { title: "Title", description: "Description" })
+        const project = await projectFactory.createProject({ title: "Title", description: "Description" })
         const response = await request(app.getHttpServer()).put(`/projects/${project.id}`).send({})
 
         expect(response.status).toEqual(400)
@@ -239,7 +241,7 @@ describe("Project e2e", () => {
     })
 
     it('(DELETE) /projects/:id', async () => {
-        const project = await createProject(dataSource, { title: "Title", description: "Description" })
+        const project = await projectFactory.createProject({ title: "Title", description: "Description" })
         const response = await request(app.getHttpServer()).delete(`/projects/${project.id}`)
 
         expect(response.status).toEqual(200)

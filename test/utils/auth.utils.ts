@@ -2,7 +2,7 @@ import { INestApplication } from "@nestjs/common";
 import { CreateUserDTO } from "src/auth/dto/create-user.dto";
 import { App } from "supertest/types";
 import { DataSource } from "typeorm";
-import { createUser } from "./factories/user.factory";
+import { UserFactory } from "./factories/user.factory";
 import { LoginUserDTO } from "src/auth/dto/login-user.dto";
 import * as request from 'supertest';
 import { UserGender } from "../../src/users/entities/user.entity";
@@ -19,7 +19,7 @@ export const loginUser = async (dataSource: DataSource, app: INestApplication<Ap
         confirmPassword: "Cristi@na1"
     }
 
-    await createUser(dataSource, dto)
+    await new UserFactory(dataSource).createUser(dto)
 
     const loginDto: LoginUserDTO = {
         username: dto.username,

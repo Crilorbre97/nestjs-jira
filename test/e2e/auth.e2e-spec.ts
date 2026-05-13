@@ -9,12 +9,13 @@ import { cleanDB } from "../utils/database.utils"
 import { CreateUserDTO } from "../../src/auth/dto/create-user.dto"
 import { UserGender } from "../../src/users/entities/user.entity"
 import * as request from 'supertest';
-import { createUser } from "../utils/factories/user.factory"
+import { UserFactory } from "../utils/factories/user.factory"
 import { LoginUserDTO } from "../../src/auth/dto/login-user.dto"
 
 describe("Auth e2e", () => {
     let app: INestApplication<App>
     let dataSource: DataSource
+    let userFactory: UserFactory
 
     beforeAll(() => {
         if (process.env.NODE_ENV !== 'test'){
@@ -41,6 +42,7 @@ describe("Auth e2e", () => {
         await app.init()
 
         dataSource = app.get(DataSource)
+        userFactory = new UserFactory(dataSource)
     })
 
     beforeEach(async () => {
@@ -94,7 +96,7 @@ describe("Auth e2e", () => {
             password: "Cristi@na1",
             confirmPassword: "Cristi@na1"
         }
-        await createUser(dataSource, dto)
+        await userFactory.createUser(dto)
         const response = await request(app.getHttpServer()).post('/auth/register').send(dto)
         expect(response.status).toEqual(409)
         expect(response.body).toEqual({
@@ -115,7 +117,7 @@ describe("Auth e2e", () => {
             password: "Cristi@na1",
             confirmPassword: "Cristi@na1"
         }
-        await createUser(dataSource, dto)
+        await userFactory.createUser(dto)
 
         const newDto: CreateUserDTO = {
             ...dto,
@@ -164,7 +166,7 @@ describe("Auth e2e", () => {
             password: "Cristi@na1",
             confirmPassword: "Cristi@na1"
         }
-        await createUser(dataSource, dto)
+        await userFactory.createUser(dto)
 
         const loginDto: LoginUserDTO = {
             username: dto.username,
@@ -188,7 +190,7 @@ describe("Auth e2e", () => {
             password: "Cristi@na1",
             confirmPassword: "Cristi@na1"
         }
-        await createUser(dataSource, dto)
+        await userFactory.createUser(dto)
 
         const loginDto: LoginUserDTO = {
             username: "username_updated",
@@ -214,7 +216,7 @@ describe("Auth e2e", () => {
             password: "Cristi@na1",
             confirmPassword: "Cristi@na1"
         }
-        await createUser(dataSource, dto)
+        await userFactory.createUser(dto)
 
         const loginDto: LoginUserDTO = {
             username: dto.username,
@@ -240,7 +242,7 @@ describe("Auth e2e", () => {
             password: "Cristi@na1",
             confirmPassword: "Cristi@na1"
         }
-        await createUser(dataSource, dto)
+        await userFactory.createUser(dto)
 
         const loginDto: LoginUserDTO = {
             username: dto.username,
