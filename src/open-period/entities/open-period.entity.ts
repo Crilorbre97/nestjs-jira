@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Exam } from "../../exam/entities/exam.entity";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class OpenPeriod {
@@ -16,4 +17,7 @@ export class OpenPeriod {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @ManyToOne(() => Exam, (exam) => exam.openPeriods)
+    exam: Exam
 }

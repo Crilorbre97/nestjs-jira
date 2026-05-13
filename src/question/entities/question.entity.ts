@@ -1,4 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { QuestionOption } from "../../question-option/entities/question-option.entity";
+import { Exam } from "../../exam/entities/exam.entity";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export enum QuestionType {
     MULTIPLE_CHOICE = 'multiple_choice',
@@ -28,4 +30,10 @@ export class Question {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @ManyToOne(() => Exam, (exam) => exam.questions)
+    exam: Exam
+
+    @OneToMany(() => QuestionOption, (questionOption) => questionOption.question, { cascade: true })
+    questionOptions: QuestionOption[]
 }
