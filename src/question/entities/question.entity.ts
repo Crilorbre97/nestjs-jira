@@ -13,7 +13,7 @@ export class Question {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ length: 255 })
     title: string;
 
     @Column({ type: 'enum', enum: QuestionType })

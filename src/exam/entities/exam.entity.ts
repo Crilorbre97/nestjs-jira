@@ -11,10 +11,10 @@ export class Exam {
     @Column({ length: 50 })
     title: string;
 
-    @Column({ type: 'text' })
+    @Column({ type: 'text', nullable: true })
     description: string;
 
-    @Column()
+    @Column({ default: false })
     isOpen: boolean;
 
     @CreateDateColumn()
