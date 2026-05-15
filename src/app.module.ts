@@ -9,6 +9,7 @@ import { ProjectModule } from './projects/project.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { QueueModule } from './queue/queue.module';
+import { ExamModule } from './exam/exam.module';
 import clientsConfig from './config/clients.config';
 
 @Module({
@@ -21,7 +22,8 @@ import clientsConfig from './config/clients.config';
     ProjectModule,
     UsersModule,
     AuthModule,
-    QueueModule
+    QueueModule,
+    ExamModule
   ],
   controllers: [],
   providers: [],
