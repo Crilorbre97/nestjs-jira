@@ -30,13 +30,13 @@ export class QuestionService {
 
         let questionsOptions: QuestionOption[] = [];
 
-        if (dto.options && dto.questionType !== 'open_answer') {
-            questionsOptions = dto.options.map(option => {
+        if (dto.questionOptions && dto.questionType !== 'open_answer') {
+            questionsOptions = dto.questionOptions.map(option => {
                 return this.questionOptionService.newQuestionOption({ ...option })
             })
         }
 
-        const { options, ...questionData } = dto;
+        const { questionOptions, ...questionData } = dto;
 
         const question = this.questionRepository.create({ ...questionData, questionOptions: questionsOptions, exam: exam });
         return await this.questionRepository.save(question);

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { QuestionService } from './question.service';
 import { ExamService } from 'src/exam/exam.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
@@ -13,7 +13,12 @@ export class QuestionController {
     }
 
     @Post("exam/:id")
-    createQuestion(@Param('id', ParseIntPipe) id: number, @Body() dto: CreateQuestionDto){
+    async createQuestion(@Param('id', ParseIntPipe) id: number, @Body() dto: CreateQuestionDto){
+        const errors = await CreateQuestionDto.validate(dto);
+        if (errors.length > 0) {
+            throw new BadRequestException(errors);
+        }
+
         return this.questionService.createQuestion(id, dto);
     }
 }

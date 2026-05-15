@@ -1,8 +1,7 @@
-import { ArrayMinSize, IsArray, IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString, MaxLength, MinLength, Validate, ValidateIf, ValidateNested } from "class-validator";
+import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, MinLength, validate } from "class-validator";
 import { QuestionType } from "../entities/question.entity";
-import { Type } from "class-transformer";
+import { plainToClass, Type } from "class-transformer";
 import { CreateQuestionOptionDto } from "src/question-option/dto/create-question.dto";
-import { AtLeastOneCorrect } from "../decorators/at-least-one-correct.decorator";
 
 export class CreateQuestionDto {
     @IsNotEmpty({ message: 'Title is required' })
@@ -23,13 +22,55 @@ export class CreateQuestionDto {
     @IsNumber({ maxDecimalPlaces: 2 }, { message: 'Score must be a number with at most 2 decimal places' })
     score: number;
 
-    @ValidateIf(o => o.questionType === QuestionType.MULTIPLE_CHOICE || o.questionType === QuestionType.ONE_CHOICE)
-    @IsNotEmpty({ message: 'Options are required for multiple_choice and one_choice questions' })
-    @IsArray({ message: 'Options must be an array' })
-    @ArrayMinSize(2, { message: 'At least 2 options are required' })
-    @ValidateNested({ each: true })
-    @Type(() => CreateQuestionOptionDto)
-    @AtLeastOneCorrect({ message: 'At least one option must be marked as correct' })
-    options?: CreateQuestionOptionDto[];
+    @IsOptional()
+    questionOptions?: CreateQuestionOptionDto[];
+
+    static async validate(dto: CreateQuestionDto): Promise<string[]> {
+        const errors: string[] = [];
+        
+        if (dto.questionType === QuestionType.OPEN_ANSWER) {
+            if (dto.questionOptions !== undefined && dto.questionOptions !== null) {
+                errors.push('questionOptions must not be provided for OPEN_ANSWER questions');
+            }
+        } 
+        else if ([QuestionType.MULTIPLE_CHOICE, QuestionType.ONE_CHOICE].includes(dto.questionType)) {
+            if (!dto.questionOptions || dto.questionOptions.length === 0) {
+                errors.push('questionOptions is required for multiple choice or one choice questions');
+            } else {
+                // Validar cada opción
+                for (let i = 0; i < dto.questionOptions.length; i++) {
+                    const opt = dto.questionOptions[i];
+                    const optionInstance = plainToClass(CreateQuestionOptionDto, opt);
+                    const optionErrors = await validate(optionInstance);
+                    if (optionErrors.length > 0) {
+                        // Mapear errores para tener contexto del índice
+                        optionErrors.forEach(error => {
+                            const constraints = error.constraints;
+                            if (constraints) {
+                                Object.values(constraints).forEach(message => {
+                                    errors.push(`Option ${i}: ${message}`);
+                                });
+                            }
+                        });
+                    }
+                }
+                
+                // Validar al menos una correcta
+                if (!dto.questionOptions.some(opt => opt.isCorrect)) {
+                    errors.push('At least one option must be marked as correct');
+                }
+                
+                // Para ONE_CHOICE, validar exactamente una correcta
+                if (dto.questionType === QuestionType.ONE_CHOICE) {
+                    const correctCount = dto.questionOptions.filter(opt => opt.isCorrect).length;
+                    if (correctCount !== 1) {
+                        errors.push('ONE_CHOICE questions must have exactly one correct option');
+                    }
+                }
+            }
+        }
+        
+        return errors;
+    }
 }
 
