@@ -38,9 +38,7 @@ export class QuestionService {
 
         const { options, ...questionData } = dto;
 
-        const question = this.questionRepository.create({ ...questionData, questionOptions: questionsOptions });
-        question.exam = exam;
-
+        const question = this.questionRepository.create({ ...questionData, questionOptions: questionsOptions, exam: exam });
         return await this.questionRepository.save(question);
     }
 }
