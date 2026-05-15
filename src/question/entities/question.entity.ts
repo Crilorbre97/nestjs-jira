@@ -34,6 +34,6 @@ export class Question {
     @ManyToOne(() => Exam, (exam) => exam.questions)
     exam: Exam
 
-    @OneToMany(() => QuestionOption, (questionOption) => questionOption.question, { cascade: true })
+    @OneToMany(() => QuestionOption, (questionOption) => questionOption.question, { cascade: [ "insert" ] })
     questionOptions: QuestionOption[]
 }

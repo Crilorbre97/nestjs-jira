@@ -10,6 +10,8 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { QueueModule } from './queue/queue.module';
 import { ExamModule } from './exam/exam.module';
+import { QuestionModule } from './question/question.module';
+import { QuestionOptionModule } from './question-option/question-option.module';
 import clientsConfig from './config/clients.config';
 
 @Module({
@@ -23,7 +25,9 @@ import clientsConfig from './config/clients.config';
     UsersModule,
     AuthModule,
     QueueModule,
-    ExamModule
+    ExamModule,
+    QuestionModule,
+    QuestionOptionModule
   ],
   controllers: [],
   providers: [],

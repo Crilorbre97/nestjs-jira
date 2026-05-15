@@ -1,0 +1,10 @@
+import { Module } from '@nestjs/common';
+import { QuestionOptionService } from './question-option.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { QuestionOption } from './entities/question-option.entity';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([QuestionOption])],
+  providers: [QuestionOptionService]
+})
+export class QuestionOptionModule {}
