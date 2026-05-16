@@ -31,7 +31,7 @@ export class Question {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @ManyToOne(() => Exam, (exam) => exam.questions)
+    @ManyToOne(() => Exam, (exam) => exam.questions, { onDelete: 'CASCADE' })
     exam: Exam
 
     @OneToMany(() => QuestionOption, (questionOption) => questionOption.question, { cascade: [ "insert" ] })

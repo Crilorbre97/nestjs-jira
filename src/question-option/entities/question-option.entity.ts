@@ -19,7 +19,7 @@ export class QuestionOption {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @ManyToOne(() => Question, (question) => question.questionOptions)
+    @ManyToOne(() => Question, (question) => question.questionOptions, { onDelete: 'CASCADE' })
     question: Question
 
     @OneToMany(() => AnswerOption, (answerOption) => answerOption.questionOption)
