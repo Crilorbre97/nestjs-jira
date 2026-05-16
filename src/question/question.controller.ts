@@ -1,11 +1,10 @@
 import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { QuestionService } from './question.service';
-import { ExamService } from 'src/exam/exam.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 
 @Controller('questions')
 export class QuestionController {
-    constructor(private readonly questionService: QuestionService, private readonly examService: ExamService){}
+    constructor(private readonly questionService: QuestionService){}
 
     @Get('exam/:id')
     getQuestionsByExam(@Param('id', ParseIntPipe) id: number){

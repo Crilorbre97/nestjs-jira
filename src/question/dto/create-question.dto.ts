@@ -1,7 +1,7 @@
 import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, MaxLength, MinLength, validate } from "class-validator";
 import { QuestionType } from "../entities/question.entity";
 import { plainToClass, Type } from "class-transformer";
-import { CreateQuestionOptionDto } from "src/question-option/dto/create-question.dto";
+import { CreateQuestionOptionDto } from "../../question-option/dto/create-question.dto";
 
 export class CreateQuestionDto {
     @IsNotEmpty({ message: 'Title is required' })
