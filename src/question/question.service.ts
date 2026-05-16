@@ -21,6 +21,16 @@ export class QuestionService {
         return await this.questionRepository.find({ where: { exam: { id: examId } }, relations: ['questionOptions'] });
     }
 
+    async findOne(id: number): Promise<Question> {
+        const question = await this.questionRepository.findOne({ where: { id }, relations: ['questionOptions'] });
+
+        if (!question) {
+            throw new NotFoundException(`Question with ${id} not found`)
+        }
+
+        return question;
+    }
+
     async createQuestion(examId: number, dto: CreateQuestionDto): Promise<Question> {
         const exam = await this.examService.findOne(examId);
 
@@ -40,5 +50,15 @@ export class QuestionService {
 
         const question = this.questionRepository.create({ ...questionData, questionOptions: questionsOptions, exam: exam });
         return await this.questionRepository.save(question);
+    }
+
+    async deleteQuestion(id: number): Promise<void> {
+        const question = await this.questionRepository.findOne({ where: { id } });
+
+        if (!question) {
+            throw new NotFoundException(`Question with ${id} not found`)
+        }
+
+        await this.questionRepository.remove(question);
     }
 }
