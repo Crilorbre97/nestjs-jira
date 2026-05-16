@@ -1,6 +1,7 @@
 import { QuestionOption } from "../../question-option/entities/question-option.entity";
 import { Exam } from "../../exam/entities/exam.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Answer } from "../../answer/entities/answer.entity";
 
 export enum QuestionType {
     MULTIPLE_CHOICE = 'multiple_choice',
@@ -36,4 +37,7 @@ export class Question {
 
     @OneToMany(() => QuestionOption, (questionOption) => questionOption.question, { cascade: [ "insert" ] })
     questionOptions: QuestionOption[]
+
+    @OneToMany(() => Answer, (answer) => answer.question)
+    answers: Answer[]
 }
