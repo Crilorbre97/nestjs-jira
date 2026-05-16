@@ -1,3 +1,4 @@
+import { User } from "../../users/entities/user.entity";
 import { Answer } from "../../answer/entities/answer.entity";
 import { Exam } from "../../exam/entities/exam.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
@@ -16,9 +17,12 @@ export class ExamSession {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @ManyToOne(() => Exam, (exam) => exam.examSessions)
+    @ManyToOne(() => Exam, (exam) => exam.examSessions, { onDelete: 'CASCADE' })
     exam: Exam
 
     @OneToMany(() => Answer, (answer) => answer.examSession)
     answers: Answer[];
+
+    @ManyToOne(() => User, (user) => user.examSessions, { onDelete: 'CASCADE' })
+    user: User;
 }

@@ -1,5 +1,6 @@
+import { ExamSession } from "../../exam-session/entities/exam-session.entity";
 import { UserAccount } from "./user-account.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export enum UserGender {
     MALE = 'male',
@@ -50,4 +51,7 @@ export class User {
 
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @OneToMany(() => ExamSession, (examSession) => examSession.user)
+    examSessions: ExamSession[];
 }
