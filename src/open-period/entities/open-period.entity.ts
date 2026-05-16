@@ -18,6 +18,6 @@ export class OpenPeriod {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @ManyToOne(() => Exam, (exam) => exam.openPeriods)
+    @ManyToOne(() => Exam, (exam) => exam.openPeriods, { onDelete: 'CASCADE' })
     exam: Exam
 }
