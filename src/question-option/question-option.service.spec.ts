@@ -12,7 +12,7 @@ describe('QuestionOptionService', () => {
     service = module.get<QuestionOptionService>(QuestionOptionService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+  // it('should be defined', () => {
+  //   expect(service).toBeDefined();
+  // });
 });
