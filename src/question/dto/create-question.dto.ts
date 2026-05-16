@@ -10,8 +10,8 @@ export class CreateQuestionDto {
     @MaxLength(255, { message: 'Title can not be longer than 255 characters' })
     title: string;
 
-    @IsNotEmpty({ message: 'Type is required' })
-    @IsEnum(QuestionType, { message: 'Type must be one of: multiple_choice, one_choice, open_answer' })
+    @IsNotEmpty({ message: 'Question type is required' })
+    @IsEnum(QuestionType, { message: 'Question type must be one of: multiple_choice, one_choice, open_answer' })
     questionType: QuestionType;
 
     @IsNotEmpty({ message: 'Scoreable is required' })
