@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
 import { ExamService } from './exam.service';
-import { PaginationDTO } from 'src/common/dto/pagination.dto';
+import { PaginationDTO } from '../common/dto/pagination.dto';
 import { CreateExamDTO } from './dto/create-exam.dto';
 import { UpdateExamDTO } from './dto/update-exam.dto';
 
