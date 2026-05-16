@@ -1,6 +1,6 @@
 import { AnswerOption } from "../../answer-option/entities/answer-option.entity";
 import { ExamSession } from "../../exam-session/entities/exam-session.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class Answer {
@@ -19,7 +19,6 @@ export class Answer {
     @ManyToOne(() => ExamSession, (examSession) => examSession.answers)
     examSession: ExamSession;
 
-    @OneToOne(() => AnswerOption, (answerOption) => answerOption.answer)
-    @JoinColumn()
-    answerOption: AnswerOption;
+    @OneToMany(() => AnswerOption, (answerOption) => answerOption.answer)
+    answerOption: AnswerOption[];
 }

@@ -13,9 +13,8 @@ export class AnswerOption {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    @OneToOne(() => Answer, (answer) => answer.answerOption)
+    @ManyToOne(() => Answer, (answer) => answer.answerOption)
     answer: Answer;
-
 
     @ManyToOne(() => QuestionOption, (questionOption) => questionOption.answerOption)
     questionOption: QuestionOption;
