@@ -11,6 +11,9 @@ export class Answer {
     @Column({ length: 255, nullable: true })
     response: string;
 
+    @Column()
+    isCorrect: boolean;
+
     @CreateDateColumn()
     createdAt: Date;
 
