@@ -58,4 +58,16 @@ export class ExamService {
 
         await this.examRepository.remove(exam);
     }
+
+    async findCompletedExamsByUserId(userId: number): Promise<Exam[]> {
+        const exams = await this.examRepository
+            .createQueryBuilder('exam')
+            .innerJoin('exam.examSessions', 'examSession')
+            .innerJoin('examSession.user', 'user')
+            .where('user.id = :userId', { userId })
+            .andWhere('examSession.isCompleted = true')
+            .getMany();
+
+        return exams;
+    }
 }
