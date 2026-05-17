@@ -19,4 +19,12 @@ export class ExamSessionService {
         const newExamSession = this.examSessionRepository.create({ exam, isCompleted: false, user });
         return this.examSessionRepository.save(newExamSession);
     }
+
+    async findOne(id: number, relations: string[] = []): Promise<ExamSession> {
+        const examSession = await this.examSessionRepository.findOne({ where: { id }, relations: relations });
+        if (!examSession) {
+            throw new NotFoundException(`Exam session with id ${id} not found`);
+        }
+        return examSession;
+    }
 }
