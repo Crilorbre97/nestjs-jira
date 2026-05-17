@@ -13,6 +13,8 @@ import { ExamModule } from './exam/exam.module';
 import { QuestionModule } from './question/question.module';
 import { QuestionOptionModule } from './question-option/question-option.module';
 import { ExamSessionModule } from './exam-session/exam-session.module';
+import { AnswerModule } from './answer/answer.module';
+import { AnswerOptionModule } from './answer-option/answer-option.module';
 import clientsConfig from './config/clients.config';
 
 @Module({
@@ -29,7 +31,9 @@ import clientsConfig from './config/clients.config';
     ExamModule,
     QuestionModule,
     QuestionOptionModule,
-    ExamSessionModule
+    ExamSessionModule,
+    AnswerModule,
+    AnswerOptionModule
   ],
   controllers: [],
   providers: [],

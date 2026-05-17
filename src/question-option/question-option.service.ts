@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QuestionOption } from './entities/question-option.entity';
 import { Repository } from 'typeorm';
@@ -10,5 +10,13 @@ export class QuestionOptionService {
 
     newQuestionOption(dto: CreateQuestionOptionDto): QuestionOption {
         return this.questionOptionRepository.create(dto);
+    }
+
+    async findOne(id: number): Promise<QuestionOption> {
+        const option = await this.questionOptionRepository.findOne({ where: { id } });
+        if (!option) {
+            throw new NotFoundException(`Question option with id ${id} not found`);
+        }
+        return option;
     }
 }

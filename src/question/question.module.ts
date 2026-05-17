@@ -11,6 +11,7 @@ import { QuestionOptionService } from 'src/question-option/question-option.servi
 @Module({
   imports: [TypeOrmModule.forFeature([Question, QuestionOption, Exam])],
   providers: [QuestionService, QuestionOptionService, ExamService],
+  exports: [QuestionService, QuestionOptionService, ExamService],
   controllers: [QuestionController]
 })
 export class QuestionModule {}
