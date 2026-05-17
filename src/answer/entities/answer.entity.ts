@@ -8,7 +8,7 @@ export class Answer {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 255 })
+    @Column({ length: 255, nullable: true })
     response: string;
 
     @CreateDateColumn()
