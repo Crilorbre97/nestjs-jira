@@ -20,7 +20,7 @@ export class Answer {
     @ManyToOne(() => ExamSession, (examSession) => examSession.answers)
     examSession: ExamSession;
 
-    @OneToMany(() => AnswerOption, (answerOption) => answerOption.answer)
+    @OneToMany(() => AnswerOption, (answerOption) => answerOption.answer, { cascade: [ "insert" ] })
     answerOption: AnswerOption[];
 
     @ManyToOne(() => Question, (question) => question.answers)
