@@ -11,7 +11,7 @@ export class Answer {
     @Column({ length: 255, nullable: true })
     response: string;
 
-    @Column()
+    @Column({ default: false })
     isCorrect: boolean;
 
     @CreateDateColumn()
