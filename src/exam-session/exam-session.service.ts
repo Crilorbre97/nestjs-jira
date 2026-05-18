@@ -27,4 +27,19 @@ export class ExamSessionService {
         }
         return examSession;
     }
+
+    async calculateUserScore(userId: number, examSessionId: number): Promise<number> {
+        const examSessionScore = await this.examSessionRepository
+            .createQueryBuilder('examSession')
+            .leftJoin('examSession.answers', 'answer')
+            .leftJoin('answer.question', 'question')
+            .where('examSession.id = :examSessionId', { examSessionId })
+            .andWhere('examSession.user.id = :userId', { userId })
+            .andWhere('answer.isCorrect = true')
+            .andWhere('question.scoreable = true')
+            .select('SUM(question.score)', 'score')
+            .getRawOne();
+
+        return examSessionScore.score || 0;
+    }
 }
